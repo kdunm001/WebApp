@@ -1,9 +1,12 @@
+# kdb: This .py file helps with administrative tasks (i.e. runserver and database migrations)
+
 #!/usr/bin/env python
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
 
 
+# kdb: Setting the default environment variable (DJANGO_SETTING_MODULE, which is the webapp_django.settings path), and tries to execute a command given the system arguments (using imported sys library)
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp_django.settings')

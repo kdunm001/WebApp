@@ -1,3 +1,5 @@
+# kdb: This .py file is the hub where settings are held (i.e. global variables, configure database connections and template locations)
+
 """
 Django settings for webapp_django project.
 
@@ -25,12 +27,14 @@ SECRET_KEY = 'django-insecure-n%a^rihqiv5y8i05ani90w0hr-)g1%uy@r6*khuh!i8ra=$pip
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# kdb: In production, this is where the hosts will be identified.  For local development, this can be left blank.
 ALLOWED_HOSTS = []
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    # kdb: Django's default apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,6 +44,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    # kdb: Django's default middleware
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -49,11 +54,14 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# kdb: Path to the general urls.py file
 ROOT_URLCONF = 'webapp_django.urls'
 
+# kdb: List of configuration objects
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        # kdb: Templates can be entered below in the list of directories
         'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -67,12 +75,14 @@ TEMPLATES = [
     },
 ]
 
+# kdb: Django automatically points to WSGI to run the application
 WSGI_APPLICATION = 'webapp_django.wsgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# kdb: This database configuration can be updated to indicate another type of database, SQLite3 is good for local but not for producation (PostgreSQL or MySQL is recommended).
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -84,6 +94,7 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
+# kdb: Password validators can be modified at a later time, but what is provided are default Django settings
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -107,6 +118,7 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
+# kdb: Internationalization
 USE_I18N = True
 
 USE_TZ = True

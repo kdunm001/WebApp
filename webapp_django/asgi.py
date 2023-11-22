@@ -1,3 +1,5 @@
+# kdb: This .py file helps run the Django server asynchronously
+
 """
 ASGI config for webapp_django project.
 

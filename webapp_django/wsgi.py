@@ -1,3 +1,5 @@
+# kdb: This .py file mimics asgi.py, but using a different interfacte to run the Django server
+
 """
 WSGI config for webapp_django project.
 
