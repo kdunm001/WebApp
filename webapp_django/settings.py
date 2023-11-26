@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # kdb: Created apps
-    'userprofile',
+    'core',
     'timesheet',
 ]
 
@@ -139,4 +139,4 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #kdb: Telling Django that I have a custom User model
-AUTH_USER_MODEL = 'userprofile.User'
+AUTH_USER_MODEL = 'core.User'

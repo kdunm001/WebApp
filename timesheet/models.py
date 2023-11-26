@@ -11,3 +11,6 @@ from django.db import models
     # datetime of end
     # duration between start and end
     # location (foreign key, from Locations)
+
+# Query the database with a year greater than 2021
+# Timesheet.objects.filter(year__gt=2021)

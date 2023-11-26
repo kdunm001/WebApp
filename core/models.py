@@ -21,14 +21,8 @@ class User(AbstractUser):
     # date_joined (DateTimeField, default=timezone.now)
     pass
 
-
-class Userprofile(models.Model):
-    # id (Django creates this field automatically and assigns it as a primary key)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    # team (foreign key, from Team, can be added at a later time for admin to evaluate statistics)
-
-    def __str__(self):
-        return self.user.username
+    # def __str__(self):
+    #     return f"{self.first_name} {self.last_name}"
 
 
 # Location should be imported from another database
