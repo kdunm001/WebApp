@@ -22,7 +22,7 @@ from django.contrib import admin
 from django.urls import path, include
 # kdb: Link views to URLs
 from django.contrib.auth.views import LoginView, LogoutView
-from core.views import home_page # Class view: HomePageView
+from core.views import home_page, SignupView # Class view: HomePageView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,6 +30,7 @@ urlpatterns = [
     # Class based view path('', HomePageView.as_view(), name="home_page")
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
+    path('signup/', SignupView.as_view(), name='signup'),
 ]
 
 if settings.DEBUG == True:
