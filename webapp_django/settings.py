@@ -132,11 +132,21 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+# kdb: Extra static settings, lists of paths to help Django recognize static files
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+# kdb: Root folder for all static files, once all items are placed in one directory
+STATIC_ROOT = "static_root"
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#kdb: Telling Django that I have a custom User model
+# kdb: Telling Django that I have a custom User model
 AUTH_USER_MODEL = 'core.User'
+
+# kdb: Overriding the defaul login redirect
+# LOGIN_REDIRECT_URL = "/timesheet"

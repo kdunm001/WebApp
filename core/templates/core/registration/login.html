@@ -1,0 +1,12 @@
+{% extends 'core/base.html' %}
+
+{% block title%}Log In | {% endblock %}
+
+{% block content %}
+    <!-- Under venv > Lib > contrib > auth > views.py lives a LoginView (this is where it states that the view is linked to registration > login.html, which I had to create).  AuthenticationForm lives in venv > Lib > contrib > auth > formss.py -->
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type='submit'>Log In</button>
+    </form>
+{% endblock content %}

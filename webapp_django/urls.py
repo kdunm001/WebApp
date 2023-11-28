@@ -14,11 +14,22 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+# kdb: Link static folder to URLs
+from django.conf import settings
+from django.conf.urls.static import static
+# kdb: Pre-populated from Django
 from django.contrib import admin
-from django.urls import path
-from core.views import home_page
+from django.urls import path, include
+# kdb: Link views to URLs
+from django.contrib.auth.views import LoginView
+from core.views import home_page # Class view: HomePageView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', home_page),
+    path('', home_page, name='home_page'),
+    # Class based view path('', HomePageView.as_view(), name="home_page")
+    path('login/', LoginView.as_view(), name='login')
 ]
+
+if settings.DEBUG == True:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
