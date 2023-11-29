@@ -1,5 +1,8 @@
 # kdb: This .py file helps handle web requests (i.e. redirect, etc.)
 
+# kdb: Import used to send emails
+from django.core.mail import send_mail
+# kdb: Django automatically imports render, I aded redirect and reverse
 from django.shortcuts import render, redirect, reverse
 # kdb: Django's generic, pre-based class views that can be inherited
 # from django.views.generic import TemplateView
@@ -18,12 +21,23 @@ def home_page(request):
 # class HomePageView(TemplateView):
 #     template_name = "core/home_page.html"
 
-# kdb: Django already has LoginView and LogoutView, so no need to create
+# kdb: Django already has LoginView, LogoutView, and PasswordResetView, so no need to create
 # kdb: Django does not have a pre-build SignupView, so I have created one below
 
 class SignupView(generic.CreateView):
-    template_name = "core/registration/signup.html"
+    template_name = "registration/signup.html"
     form_class = CustomUserCreationForm
 
     def get_success_url(self):
         return reverse("login")
+    
+    # def form_valid(self, form):
+        # TODO send email
+        # send_mail(
+        #     subject="Signup confirmed!",
+        #     message="Thank you for signing up!",
+        #     from_email="noreply@test.com",
+        #     recipient_list="test@test.com"
+        # )
+        # kdb: super() function inherits from SignupView to continue it's functionality, allows me to add items within the SignupView process
+        # return super(SignupView).form_valid(form)

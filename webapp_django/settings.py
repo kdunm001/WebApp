@@ -66,7 +66,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         # kdb: Templates can be entered below in the list of directories
-        'DIRS': [],
+        'DIRS': [ BASE_DIR / 'core' / 'templates' ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -148,5 +148,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # kdb: Telling Django that I have a custom User model
 AUTH_USER_MODEL = 'core.User'
 
-# kdb: Overriding the defaul login redirect
-# LOGIN_REDIRECT_URL = "/timesheet"
+# kdb: Overriding the defaul login and logout redirects
+# LOGIN_REDIRECT_URL = "home_page"
+LOGOUT_REDIRECT_URL = "home_page"
+
+# kdb: Configure email backend, telling Django how to send emails, in the instance below, it just logs the emails in the terminal - will need to be updated for production
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# kdb: What is used by default is smtp (simple Mail Transfer Protocol), and needs configuration with smtp credentials (which is given by email providers like SendGrid or MailGun)
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+# EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+# EMAIL_FILE_PATH = BASE_DIR / "sent_emails"
