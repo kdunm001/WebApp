@@ -42,7 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # kdb: Created apps
+    # kdb: Third-party apps
+    'crispy_forms',
+    'crispy_tailwind',
+
+    # kdb: Locally created apps
     'core',
     'timesheet',
 ]
@@ -149,13 +153,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'core.User'
 
 # kdb: Overriding the defaul login and logout redirects
-# LOGIN_REDIRECT_URL = "home_page"
+LOGIN_REDIRECT_URL = "home_page"
 LOGOUT_REDIRECT_URL = "home_page"
 
 # kdb: Configure email backend, telling Django how to send emails, in the instance below, it just logs the emails in the terminal - will need to be updated for production
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # kdb: What is used by default is smtp (simple Mail Transfer Protocol), and needs configuration with smtp credentials (which is given by email providers like SendGrid or MailGun)
 # EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-
+# OR
 # EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 # EMAIL_FILE_PATH = BASE_DIR / "sent_emails"
+
+
+# kdb: Linking Crispy Forms
+CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
+CRISPY_TEMPLATE_PACK = "tailwind"
