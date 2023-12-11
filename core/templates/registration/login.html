@@ -6,15 +6,17 @@
 {% block content %}
     <!-- Under venv > Lib > contrib > auth > views.py lives a LoginView (this is where it states that the view is linked to registration > login.html, which I had to create).  AuthenticationForm lives in venv > Lib > contrib > auth > formss.py -->
     <div class="max-w-xl mx-auto">
+        <div class="mb-3 pb-2 border-b border-gray-200">
+            <a class=" hover:text-gray-400" href="{% url 'signup' %}">Don't have an account? Sign up instead.</a>
+        </div>
         <form method="post">
             {% csrf_token %}
             <!--{{ form.as_p }}-->
             {{ form|crispy }}
             <button type="submit" class="w-full text-white bg-green-500 py-2 px-6 focus:outline-none hover:bg-green-600 rounded-md text-lg">Log In</button>
-            
         </form>
         <div class="mt-3 pt-2 border-t border-gray-200">
             <a class=" hover:text-gray-400" href="{% url 'password-reset' %}">Forgot password?</a>
         </div>
-</div>
+    </div>
 {% endblock content %}
