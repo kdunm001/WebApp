@@ -1,18 +1,22 @@
 from django.db import models
+from core.models import User
 
 # Create your models here.
 # Timesheet should be linked to Userprofile
-    # id (primary key)
-    # kdb: on_delete=models.CASCADE (if userprofile is deleted, the timesheet will also be deleted)
+class Timesheet(models.Model):
+    # id (primary key, auto-generated)
+    # kdb: on_delete=models.CASCADE (if User is deleted, the timesheet will also be deleted)
     # kdb: other option, on_delete=models.SET_NULL, null=True will set the user_id to NULL
     # kdb: another option, on_delete=models.SET_DEFAULT, null=True, defaul=XXX will set the user_id to whatever is specified as the default value
-    # user_id = models.ForeignKey("Userprofile", on_delete=models.CASCADE) (foreign key, from Userprofile)
-    # start = models.DateTimeField, default=timezone.now)
-    # end = models.DateTimeField, default=timezone.now)
-    # duration = end - start
-    # location (foreign key, from Locations database?)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = models.DateField(null=True, blank=True)
+    clock_in = models.TimeField(null=True, blank=True)
+    clock_out = models.TimeField(null=True, blank=True)
+    duration = models.DurationField(null=True, blank=True)
+    # location = models.CharField(max_length=255, null=True, blank=True)
 
-# Query the database with a year greater than 2021
-# Timesheet.objects.filter(year__gt=2021)
-
-# consider duration calculation to convert to single timezone and then calculate
+# Team should be linked to a user profile
+    # id (primary key)
+    # name
+    # date created
+    # organizer

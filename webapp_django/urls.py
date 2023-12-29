@@ -23,6 +23,7 @@ from django.urls import path, include
 # kdb: Link views to URLs
 from django.contrib.auth.views import LoginView, LogoutView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 from core.views import home_page, SignupView # Class view: HomePageView
+from timesheet.views import clock_in, clock_out
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -36,6 +37,8 @@ urlpatterns = [
     path('password-reset-confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('password-reset-complete/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('signup/', SignupView.as_view(), name='signup'),
+    path('clock-in/', clock_in, name='clock_in'),
+    path('clock-out/', clock_out, name='clock_out')
 ]
 
 if settings.DEBUG == True:

@@ -21,15 +21,5 @@ class User(AbstractUser):
     # date_joined (DateTimeField, default=timezone.now)
     pass
 
-    # def __str__(self):
-    #     return f"{self.first_name} {self.last_name}"
-
-
-# Location should be imported from another database
-
-
-# Team should be linked to a user profile
-    # id (primary key)
-    # name
-    # date created
-    # organizer
+    def __str__(self):
+         return User.username
