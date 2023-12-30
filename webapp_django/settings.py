@@ -143,6 +143,9 @@ STATICFILES_DIRS = [
 # kdb: Root folder for all static files, once all items are placed in one directory
 STATIC_ROOT = "static_root"
 
+# kdb: Imaves and videos location
+MEDIA_URL = 'images/'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

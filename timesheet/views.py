@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect
 from django.utils import timezone
 from datetime import datetime
 from .models import Timesheet
@@ -12,9 +12,9 @@ from django.contrib.auth.decorators import login_required
 # Function-base view
 def history(request):
     #kdb: Create query using object manager
-
+    user_timesheets = Timesheet.objects.filter(user=request.user).order_by('-date', '-clock_in')
     context = {
-
+        "user_timesheets": user_timesheets
     }
     return render(request, "timesheet/history.html", context)
 

@@ -21,5 +21,5 @@ class User(AbstractUser):
     # date_joined (DateTimeField, default=timezone.now)
     pass
 
-    def __str__(self):
-         return User.username
+    def __int__(self):
+        return self.username
