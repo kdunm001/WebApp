@@ -14,6 +14,8 @@ class Timesheet(models.Model):
     clock_out = models.TimeField(null=True, blank=True)
     duration = models.DurationField(null=True, blank=True)
     # location = models.CharField(max_length=255, null=True, blank=True)
+    # kdb: active field added to help identify if a user has already clocked in (I am noticing that once a user clocks in, if they visit another page, the clocked in status is not saved, and they are asked to clock in again)
+    active = models.BooleanField(default=False)
 
 # Team should be linked to a user profile
     # id (primary key)

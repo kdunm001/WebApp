@@ -39,7 +39,9 @@ urlpatterns = [
     path('signup/', SignupView.as_view(), name='signup'),
     path('clock-in/', clock_in, name='clock_in'),
     path('clock-out/', clock_out, name='clock_out'),
-    path('history/', history, name='history')
+    path('history/', history, name='history'),
+    # When the static path is listed here, it is saying that the path should always reference the files in the static folder in this project. In production, it is preferred to reference a web server that holds the static files, instead of local server (as we have here).
+    # static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 ]
 
 if settings.DEBUG == True:
