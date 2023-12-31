@@ -30,7 +30,7 @@
                             <tr>
                                 <td class="px-4 py-3">{{ timesheet.date }}</td>
                                 <td class="px-4 py-3">{{ timesheet.duration }}</td>
-                                <td class="px-4 py-3">LOCATION</td>
+                                <td class="px-4 py-3">{{ timesheet.clock_in_latitude }}, {{ timesheet.clock_in_longitude }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>

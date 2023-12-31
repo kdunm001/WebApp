@@ -9,9 +9,10 @@ from django.contrib.auth.decorators import login_required
 # kdb: Only want the user to view their own information, use mixins (arguments that are added to the inheritance of classes)
 
 # Create your views here.
-# Function-base view
+# kdb: Function-base view
 @login_required
 def history(request):
+    # Query the database for the timesheets associated with the user, organize bu newest date first, then most recent clock in time
     user_timesheets = Timesheet.objects.filter(user=request.user).order_by('-date', '-clock_in')    
     context = {
             "user_timesheets": user_timesheets,
@@ -25,8 +26,19 @@ def clock_in(request):
         current_date = timezone.now().date()
         current_time = timezone.now().time()
 
+        # Capture the user's location
+        latitude = request.POST.get('latitude')
+        longitude = request.POST.get('longitude')
+
         # Create a new Timesheet entry with current date and time when clocked in, and set it as active
-        timesheet = Timesheet(user=request.user, date=current_date, clock_in=current_time, active=True)
+        timesheet = Timesheet(
+            user = request.user, 
+            date = current_date, 
+            clock_in = current_time, 
+            active = True,
+            clock_in_latitude = latitude,
+            clock_in_longitude = longitude,
+        )
         timesheet.save()
 
         # Update session data to True
@@ -40,7 +52,7 @@ def clock_in(request):
             return redirect('clock_out')
         
         else:
-            return render(request, 'timesheet/clock-in.html')
+            return render(request, 'timesheet/clock-in.html', {'user_location': None})
 
 
 @login_required
@@ -54,6 +66,10 @@ def clock_out(request):
             clock_out_date = timezone.now().date()
             timesheet.clock_out = timezone.now().time()
             timesheet.active = False
+
+            # Capture the user's location
+            timesheet.clock_out_latitude = request.POST.get('latitude')
+            timesheet.clock_out_longitude = request.POST.get('longitude')
             
             # Calculate the duration, make sure when subtracting to combine the date and time from the fields that were entered (date and clock_in) when the user clocked in, in order to calculate duration
             timesheet.duration = datetime.combine(clock_out_date, timesheet.clock_out) - datetime.combine(timesheet.date, timesheet.clock_in)
@@ -65,4 +81,4 @@ def clock_out(request):
 
             return redirect('clock_in')
         
-    return render(request, 'timesheet/clock-out.html')
+    return render(request, 'timesheet/clock-out.html', {'user_location': None})

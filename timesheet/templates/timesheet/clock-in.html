@@ -8,11 +8,32 @@
             <div class="flex flex-wrap w-full mb-20 flex-col items-left text-left">
                 <h1 class="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">Timesheet</h1>
                 <p class="lg:w-1/2 w-full leading-relaxed text-gray-500">Use the button below to clock in.</p>
+                <p id="userLocation">Current Location: {{ user_location }}</p>
                 <form method="post" action=".">
                     {% csrf_token %}
+                    <input type="hidden" name="latitude" id="latitude" value="">
+                    <input type="hidden" name="longitude" id="longitude" value="">
                     <button type="submit" name="clock_in" value="clock_in" class="mt-5 flex flex-wrap w-full mb-20 flex-col items-center text-center text-white bg-green-500 border-0 py-2 px-6 focus:outline-none hover:bg-green-600 rounded text-lg">Clock In</button>
                 </form>
             </div>
         </div>
     </section>
+
+    <script>
+        // Use the Geolocation API to get the user's location
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                // Update the user location in the form
+                document.getElementById('userLocation').innerText = 'Current Location: ' + position.coords.latitude + ', ' + position.coords.longitude;
+
+                // Update hidden form fields with the latitude and longitude
+                document.getElementById('latitude').value = position.coords.latitude;
+                document.getElementById('longitude').value = position.coords.longitude;
+            },
+
+            function(error) {
+                console.error('Error getting current location:', error.message);
+            }
+        );
+  </script>
 {% endblock content %}
