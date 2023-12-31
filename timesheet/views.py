@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 # Function-base view
+@login_required
 def history(request):
     user_timesheets = Timesheet.objects.filter(user=request.user).order_by('-date', '-clock_in')    
     context = {
