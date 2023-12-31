@@ -16,6 +16,7 @@ def history(request):
     user_timesheets = Timesheet.objects.filter(user=request.user).order_by('-date', '-clock_in')    
     context = {
             "user_timesheets": user_timesheets,
+            "username": request.user.username,
         }
     return render(request, "timesheet/history.html", context)
 
@@ -23,6 +24,7 @@ def history(request):
 def clock_in(request):  
     # I am having trouble to keep the clocked-in status once a user leaves to another page, a solution is to use session data to store information about whether the user is currently clocked in (that way the database is not constantly queried to check if the user is clocked in)
     if request.method == "POST":
+        # Capture the current date and time
         current_date = timezone.now().date()
         current_time = timezone.now().time()
 
@@ -32,12 +34,12 @@ def clock_in(request):
 
         # Create a new Timesheet entry with current date and time when clocked in, and set it as active
         timesheet = Timesheet(
-            user = request.user, 
-            date = current_date, 
-            clock_in = current_time, 
-            active = True,
-            clock_in_latitude = latitude,
-            clock_in_longitude = longitude,
+            user=request.user, 
+            date=current_date, 
+            clock_in=current_time, 
+            active=True,
+            clock_in_latitude=latitude,
+            clock_in_longitude=longitude,
         )
         timesheet.save()
 

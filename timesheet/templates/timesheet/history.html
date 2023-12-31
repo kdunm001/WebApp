@@ -6,9 +6,9 @@
     <section class="text-gray-600 body-font">
         <div class="container px-5 py-24 mx-auto">
             <div class="flex flex-col text-center w-full mb-20">
-                <h1 class="sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900">Timesheet History</h1>
+                <h1 class="sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900">Timesheet history for {{ username }}</h1>
                 {% if user_timesheets %}
-                    <p class="lg:w-2/3 mx-auto leading-relaxed text-base">Organized by most recent record at top</p>
+                    <p class="lg:w-2/3 mx-auto leading-relaxed text-base">Organized by ascending date and clock-in time</p>
                 {% else %}
                     <p class="lg:w-2/3 mx-auto leading-relaxed text-base">No timesheet records found.</p>
                 {% endif %}
