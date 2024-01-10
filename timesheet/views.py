@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from datetime import datetime
-from .models import Timesheet
+from .models import Timesheet, Location
+from django.conf import settings
+import googlemaps
 #kdb: Verifies that user is authenticated, and, if not authenticated, will redirect the user to the log in screen
 # from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -9,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 # kdb: Only want the user to view their own information, use mixins (arguments that are added to the inheritance of classes)
 
 # Create your views here.
-# kdb: Function-base view
+# kdb: Function-base views
 @login_required
 def history(request):
     # Query the database for the timesheets associated with the user, organize bu newest date first, then most recent clock in time
@@ -54,7 +56,13 @@ def clock_in(request):
             return redirect('clock_out')
         
         else:
-            return render(request, 'timesheet/clock-in.html', {'user_location': None})
+            locations = Location.objects.all()
+
+            # Use Google Maps API by passing in API key
+            # gmaps = googlemaps.Client(key = settings.GOOGLE_MAPS_API_KEY)
+            #resuls = gmaps.geocode(locations.)
+            key = settings.GOOGLE_MAPS_API_KEY
+            return render(request, 'timesheet/clock-in.html', {'key':key})
 
 
 @login_required

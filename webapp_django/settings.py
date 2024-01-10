@@ -23,6 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-n%a^rihqiv5y8i05ani90w0hr-)g1%uy@r6*khuh!i8ra=$pip'
+GOOGLE_MAPS_API_KEY = 'AIzaSyCbJteY-0D9_W3lwHCzv4GJ8IKRBjOCiE0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -97,6 +98,18 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# kdb: In order to use an external database for the locations of addresses
+# 1. Install the required database connector (i.e. if PostgreSQL, CLI command: pip install psycopg2)
+# 2. Adjust database settings (above) to include
+# 'default': {
+#   'ENGINE': 'django.db.backends.postgresql',
+#   'NAME': 'ENTER DATABASE NAME HERE',
+#   'USER': 'ENTER DATABASE USER HERE',
+#   'PASSWORD': 'ENTER DATABASE PASSWORD HERE',
+#   'HOST': 'ENTER DATABASE HOST HERE',
+#   'POST': 'ENTER DATABASE PORT HERE',
+# }
 
 
 # Password validation

@@ -26,3 +26,13 @@ class Timesheet(models.Model):
     # name
     # date created
     # organizer
+
+class Location(models.Model):
+    name = models.CharField(max_length=255)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+
+    # kdb: Meta needed to use external database
+    # class Meta:
+    #   app_label = 'SFDC' (specify the app label for the external database)
+    #   db_table = 'SFDC_locations' (specify the table name in the external database)
