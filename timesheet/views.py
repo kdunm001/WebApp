@@ -3,7 +3,6 @@ from django.utils import timezone
 from datetime import datetime
 from .models import Timesheet, Location
 from django.conf import settings
-import googlemaps
 #kdb: Verifies that user is authenticated, and, if not authenticated, will redirect the user to the log in screen
 # from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -30,18 +29,13 @@ def clock_in(request):
         current_date = timezone.now().date()
         current_time = timezone.now().time()
 
-        # Capture the user's location
-        latitude = request.POST.get('latitude')
-        longitude = request.POST.get('longitude')
-
         # Create a new Timesheet entry with current date and time when clocked in, and set it as active
         timesheet = Timesheet(
             user=request.user, 
             date=current_date, 
             clock_in=current_time, 
             active=True,
-            clock_in_latitude=latitude,
-            clock_in_longitude=longitude,
+
         )
         timesheet.save()
 
@@ -57,12 +51,12 @@ def clock_in(request):
         
         else:
             locations = Location.objects.all()
-
-            # Use Google Maps API by passing in API key
-            # gmaps = googlemaps.Client(key = settings.GOOGLE_MAPS_API_KEY)
-            #resuls = gmaps.geocode(locations.)
             key = settings.GOOGLE_MAPS_API_KEY
-            return render(request, 'timesheet/clock-in.html', {'key':key})
+            context = {
+                'locations': locations,
+                'key': key,
+            }
+            return render(request, 'timesheet/clock-in.html', context)
 
 
 @login_required
@@ -90,5 +84,7 @@ def clock_out(request):
             request.session['clocked_in'] = False
 
             return redirect('clock_in')
-        
-    return render(request, 'timesheet/clock-out.html', {'user_location': None})
+    
+    else:
+        key = settings.GOOGLE_MAPS_API_KEY
+        return render(request, 'timesheet/clock-out.html', {'key':key})
