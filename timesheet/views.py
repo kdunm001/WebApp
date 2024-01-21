@@ -7,6 +7,9 @@ from django.conf import settings
 # from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 
+
+# from shapely.geometry import Point
+
 # kdb: Only want the user to view their own information, use mixins (arguments that are added to the inheritance of classes)
 
 # Create your views here.
@@ -20,6 +23,7 @@ def history(request):
             "username": request.user.username,
         }
     return render(request, "timesheet/history.html", context)
+
 
 @login_required
 def clock_in(request):  
@@ -51,6 +55,7 @@ def clock_in(request):
         
         else:
             locations = Location.objects.all()
+
             key = settings.GOOGLE_MAPS_API_KEY
             context = {
                 'locations': locations,

@@ -5,12 +5,13 @@
 {% block title %}Timesheet | {% endblock title %}
 
 {% block content %}
-    <!-- Load Google Maps API in the head -->
+    <!-- Load Google Maps API -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
 
     <script>
         // Initialize the map
         let map;
+        let userMarker;
 
         async function initMap() {
             const { Map } = await google.maps.importLibrary("maps");
@@ -21,42 +22,60 @@
                 mapId: '4bb9e065fd60ba4'
             });
 
-            // Get user's current location and update map
+            // Check if geolocation is supported by the browser.
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
+                // Prompt the user for permission to access their location
+                navigator.geolocation.watchPosition(
+                    // Success callback function
                     function (position) {
+                        // Get the user's latitude and longitude coordinates and assign them to variables
                         const userLocation = {
                             lat: position.coords.latitude,
                             lng: position.coords.longitude,
                         };
 
+                        if (userMarker) {
+                           clearMarkers(userMarker);
+                        }
+
                         // Center the map on the user's location
                         map.setCenter(userLocation);
 
                         // Create a marker for the user's location
-
-                        new google.maps.Marker({
+                         var userMarker = new google.maps.Marker({
                             position: userLocation,
                             map: map,
                             icon: '{% static 'images/arrow.png' %}',
                             title: "Your Location",
                         });
                     },
+                    // Error callback function
                     function (error) {
                         console.error(`Error getting location: ${error.message}`);
                     }
                 );
+            // If geolocation is not supported by the browser...
             } else {
                 console.error("Geolocation is not supported by this browser.");
             }
 
             // Add markers for each location passed from the Django view
             {% for location in locations %}
-                new google.maps.Marker({
+                var marker = new google.maps.Marker({
                     position: { lat: {{ location.latitude }}, lng: {{ location.longitude }} },
                     map: map,
                     title: "{{ location.name }}",
                 });
+
+                // Create a circle object and use bindTo() to tie it to the location marker, https://developers.google.com/maps/documentation/javascript/reference?csw=1#Circle 
+                var circle = new google.maps.Circle({
+                    map: map,
+                    radius: 804.672,    // 0.5 miles in meters
+                    fillColor: '#00ff00',
+                    strokeColor: '#02bd02',
+                    strokeWeight: 1,
+                    });
+                circle.bindTo('center', marker, 'position');
             {% endfor %}
         }
 
