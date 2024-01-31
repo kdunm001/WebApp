@@ -12,7 +12,9 @@
         // Initialize the map
         let map;
         let userMarker;
+        let clockInButton;
 
+        // JavaScript function that creates a map in the div (specified later in the html), taken from the Google Maps JavaScript API documentation.
         async function initMap() {
             const { Map } = await google.maps.importLibrary("maps");
 
@@ -28,10 +30,12 @@
                 navigator.geolocation.watchPosition(
                     // Success callback function
                     function (position) {
-                        // Get the user's latitude and longitude coordinates and assign them to variables
+                        // Get the user's latitude and longitude coordinates and assign them to variables in an object
                         const userLocation = {
                             lat: position.coords.latitude,
                             lng: position.coords.longitude,
+                            // Not sure if enableHighAccuracy should go here, but it does not break the code in this spot, and it seems to be accurately locating
+                            enableHighAccuracy: true,
                         };
 
                         if (userMarker) {
@@ -52,7 +56,7 @@
                     // Error callback function
                     function (error) {
                         console.error(`Error getting location: ${error.message}`);
-                    }
+                    } 
                 );
             // If geolocation is not supported by the browser...
             } else {
@@ -84,9 +88,9 @@
 
     <div class="bg-gray-100 p-8">
         <div class="max-w-md mx-auto bg-white rounded p-6 shadow-md">
-            <form method="POST">
+            <form method="POST" action="{% url 'clock_in' %}">
                 {% csrf_token %}
-                <button type="submit" name="clock_in" value="clock_in" class="mt-0 flex flex-wrap w-full mb-1 flex-col items-center text-center text-white bg-green-500 border-0 py-2 px-6 focus:outline-none hover:bg-green-600 rounded text-lg">Clock In</button>
+                <button id="clockInButton" name="clock_in" value="clock_in" class="mt-0 flex flex-wrap w-full mb-1 flex-col items-center text-center text-white bg-gray-300 border-0 py-2 px-6 focus:outline-none rounded text-lg" disabled>to clock in, you must be within radius</button>                
             </form>
 
             <div id="map" style="height: 60vh; width: 100%"></div>
