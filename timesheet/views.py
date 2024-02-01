@@ -91,5 +91,11 @@ def clock_out(request):
             return redirect('clock_in')
     
     else:
+        locations = Location.objects.all()
+
         key = settings.GOOGLE_MAPS_API_KEY
-        return render(request, 'timesheet/clock-out.html', {'key':key})
+        context = {
+            'locations': locations,
+            'key': key,
+        }
+        return render(request, 'timesheet/clock-out.html', context)
