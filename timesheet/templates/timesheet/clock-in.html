@@ -12,6 +12,7 @@
         // Initialize the map
         let map;
         let userMarker;
+        let userLocation = { lat: 1, lng: 1 };
         let clockInButton;
 
         // JavaScript function that creates a map in the div (specified later in the html), taken from the Google Maps JavaScript API documentation.
@@ -19,10 +20,13 @@
             const { Map } = await google.maps.importLibrary("maps");
 
             map = new Map(document.getElementById("map"), {
-                center: { lat: 1, lng: 1 },
+                center: userLocation,
                 zoom: 13,
                 mapId: '4bb9e065fd60ba4'
             });
+
+            // Enable or disable the clock-in button based on geofencing
+            clockInButton = document.getElementById('clockInButton');
 
             // Check if geolocation is supported by the browser.
             if (navigator.geolocation) {
@@ -31,27 +35,15 @@
                     // Success callback function
                     function (position) {
                         // Get the user's latitude and longitude coordinates and assign them to variables in an object
-                        const userLocation = {
+                        userLocation = {
                             lat: position.coords.latitude,
                             lng: position.coords.longitude,
                             // Not sure if enableHighAccuracy should go here, but it does not break the code in this spot, and it seems to be accurately locating
                             enableHighAccuracy: true,
                         };
 
-                        if (userMarker) {
-                           clearMarkers(userMarker);
-                        }
-
-                        // Center the map on the user's location
-                        map.setCenter(userLocation);
-
-                        // Create a marker for the user's location
-                         var userMarker = new google.maps.Marker({
-                            position: userLocation,
-                            map: map,
-                            icon: '{% static 'images/arrow.png' %}',
-                            title: "Your Location",
-                        });
+                        updateMap(userLocation);
+                        checkGeofencing(userLocation);
                     },
                     // Error callback function
                     function (error) {
@@ -81,9 +73,88 @@
                     });
                 circle.bindTo('center', marker, 'position');
             {% endfor %}
+
+            // Directly check geofencing after initializing the map
+            // checkGeofencing(userLocation);
         }
 
+        // If a userMarker already exists, when the location of the user is updated, delete the old marker
+        function updateMap(location) {
+            if (userMarker) {
+                userMarker.setMap(null); // Remove the marker from the map
+            }
+
+            // Center the map on the user's location
+            map.setCenter(location);
+
+            // Create a marker for the user's location
+                userMarker = new google.maps.Marker({
+                position: location,
+                map: map,
+                icon: '{% static 'images/arrow.png' %}',
+                title: "Your Location",
+            });
+
+            // Check geofencing when the map is updated
+            // the 'checkGeofencing' function will enable or disable the clock-in button based on whether the user is within the geofenced area. The button is initially disabled and will only be enabled when the user is within the specified radius of any of the predefined locations
+            //checkGeofencing(location);
+        }
+
+        function checkGeofencing(userLocation) {
+            // Locations is an array of locations with latitude and longitude
+            const isWithinRadius = {% for location in locations %} checkRadius(userLocation, {{ location.latitude }}, {{ location.longitude }}, 804.672) {% if not forloop.last %}||{% endif %} {% endfor %};
+            console.log("isWithinRadius:", isWithinRadius);
+
+            // Enable or disable the clock-in button based on geofencing
+            if (isWithinRadius) {
+                clockInButton.classList.remove('bg-gray-300',);
+                clockInButton.classList.add('bg-green-500', 'hover:bg-green-600');
+                clockInButton.innerText = "Clock In";
+                clockInButton.disabled = false;
+            } else {
+                clockInButton.classList.remove('bg-green-500', 'hover:bg-green-600');
+                clockInButton.classList.add('bg-gray-300');
+                clockInButton.innerText = "to clock in, you must be within radius";
+                clockInButton.disabled = true;
+            }
+        }
+
+        // The checkRadius function calculates the distance between the user and each location to determine if the user is within the radius
+        function checkRadius(userLocation, locationLat, locationLng, radius) {
+            const userLatLng = new google.maps.LatLng(userLocation.lat, userLocation.lng);
+            const locationLatLng = new google.maps.LatLng(locationLat, locationLng);
+            const distance = google.maps.geometry.spherical.computeDistanceBetween(userLatLng, locationLatLng);
+
+            // return true if user is within radius
+            return distance <= radius;
+        }
+
+        function updateUserLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function (position) {
+                        const userLatitude = position.coords.latitude;
+                        const userLongitude = position.coords.longitude;
+                        const updatedUserLocation = { lat: userLatitude, lng: userLongitude };
+
+                        // Update the map and check geofencing
+                        updateMap(updatedUserLocation);
+
+                        // Call checkGeofencing after updating the user's Location
+                        checkGeofencing(updatedUserLocation);
+                    },
+                    function (error) {
+                        console.error(`Error getting location: ${error.message}`);
+                    }
+                );
+            } else {
+                console.error("Geolocation is not supported by this browser.");
+            }
+        }
+        
+
         initMap();
+
     </script>
 
     <div class="bg-gray-100 p-8">
