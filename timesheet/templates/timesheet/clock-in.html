@@ -101,20 +101,40 @@
         }
 
         function checkGeofencing(userLocation) {
-            // Locations is an array of locations with latitude and longitude
-            const isWithinRadius = {% for location in locations %} checkRadius(userLocation, {{ location.latitude }}, {{ location.longitude }}, 804.672) {% if not forloop.last %}||{% endif %} {% endfor %};
-            // console.log("isWithinRadius:", isWithinRadius);
+            // Create an array of locations, from database
+            const locations = [
+                {% for location in locations %}
+                    { name: "{{ location.name }}", latitude: {{ location.latitude }}, longitude: {{ location.longitude }} },
+                {% endfor %}
+            ];
+
+            // Initiate variables
+            let withinRadius = false;
+            let locationName = '';
+
+            // Check to see if the user location is within the radius of the locations (using the checkRadius function for each location)
+            for (const location of locations) {
+                if (checkRadius(userLocation, location.latitude, location.longitude, 804.672)) {
+                    withinRadius = true;
+                    locationName = location.name;
+                    break;
+                }
+            }
+
+            // Set hidden input values with user's latitude, longitude, and location name
+            document.getElementById('location_name').value = withinRadius ? locationName : '';
 
             // Enable or disable the clock-in button based on geofencing
-            if (isWithinRadius) {
-                clockInButton.classList.remove('bg-gray-300',);
+            const clockInButton = document.getElementById('clockInButton');
+            if (withinRadius) {
+                clockInButton.classList.remove('bg-gray-300');
                 clockInButton.classList.add('bg-green-500', 'hover:bg-green-600');
                 clockInButton.innerText = "Clock In";
                 clockInButton.disabled = false;
             } else {
                 clockInButton.classList.remove('bg-green-500', 'hover:bg-green-600');
                 clockInButton.classList.add('bg-gray-300');
-                clockInButton.innerText = "to clock in, you must be within radius";
+                clockInButton.innerText = "To clock in, you must be within radius";
                 clockInButton.disabled = true;
             }
         }
@@ -161,6 +181,7 @@
         <div class="max-w-md mx-auto bg-white rounded p-6 shadow-md">
             <form method="POST" action="{% url 'clock_in' %}">
                 {% csrf_token %}
+                <input type="hidden" name="location_name" id="location_name">
                 <button id="clockInButton" name="clock_in" value="clock_in" class="mt-0 flex flex-wrap w-full mb-1 flex-col items-center text-center text-white bg-gray-300 border-0 py-2 px-6 focus:outline-none rounded text-lg" disabled>to clock in, you must be within radius</button>                
             </form>
 

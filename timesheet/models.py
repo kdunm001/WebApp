@@ -28,10 +28,10 @@ class Timesheet(models.Model):
     # kdb: active field added to help identify if a user has already clocked in (I am noticing that once a user clocks in, if they visit another page, the clocked in status is not saved, and they are asked to clock in again)
     active = models.BooleanField(default=False)
     # kdb: latitude and longitude added to document the user's location, max_digits=9 and decimal_places=6 will help store the user's precise location.
-    #location = models.ForeignKey(Location, default=None, null=True, on_delete=models.CASCADE)
+    location = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self) -> str:
-        return (f"{self.user} on {self.date} clocked in at {self.clock_in}")
+        return (f"{self.user} on {self.date} clocked in at {self.clock_in} near {self.location}")
 
 # Team should be linked to a user profile
     # id (primary key)

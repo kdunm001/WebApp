@@ -35,11 +35,11 @@ def clock_in(request):
 
         # Create a new Timesheet entry with current date and time when clocked in, and set it as active
         timesheet = Timesheet(
-            user=request.user, 
+            user=request.user,
             date=current_date, 
             clock_in=current_time, 
             active=True,
-
+            location=request.POST.get('location_name'),
         )
         timesheet.save()
 
