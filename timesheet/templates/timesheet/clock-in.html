@@ -31,6 +31,7 @@
             // Check if geolocation is supported by the browser.
             if (navigator.geolocation) {
                 // Prompt the user for permission to access their location
+                // Use watchPosition instead of getUserLocation (only gets location once), because the function will continuously monitor the device's location and receive updates whenever the location changes
                 navigator.geolocation.watchPosition(
                     // Success callback function
                     function (position) {
@@ -147,34 +148,9 @@
 
             // return true if user is within radius
             return distance <= radius;
-        }
-
-        // function updateUserLocation() {
-            // if (navigator.geolocation) {
-                // navigator.geolocation.getCurrentPosition(
-                    // function (position) {
-                        // const userLatitude = position.coords.latitude;
-                        // const userLongitude = position.coords.longitude;
-                        // const updatedUserLocation = { lat: userLatitude, lng: userLongitude };
-
-                        // Update the map and check geofencing
-                        // updateMap(updatedUserLocation);
-
-                        // Call checkGeofencing after updating the user's Location
-                        // checkGeofencing(updatedUserLocation);
-                    // },
-                    // function (error) {
-                        // console.error(`Error getting location: ${error.message}`);
-                    // }
-                // );
-            // } else {
-                // console.error("Geolocation is not supported by this browser.");
-            // }
-        // }
-        
+        }     
 
         initMap();
-
     </script>
 
     <div class="bg-gray-100 p-8">

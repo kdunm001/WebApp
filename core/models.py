@@ -13,9 +13,9 @@ from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
     # Already includes the following, username and password are required
     # username (CharField)
-    # first_name (CharField)
-    # last_name (CharField)
-    # email (EmailField)
+    # email = models.EmailField(unique=True)
+    # first_name = models.CharField(max_length=50)
+    # last_name = models.CharField(max_length=50)
     # is_staff (BooleanField, default=False)
     # is_active (BooleanFIeld, default=True)
     # date_joined (DateTimeField, default=timezone.now)
