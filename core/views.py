@@ -31,7 +31,19 @@ class SignupView(generic.CreateView):
     def get_success_url(self):
         return reverse("login")
     
-    # def form_valid(self, form):
+    def form_valid(self, form):
+        # Get the user instance without saving it to the database yet
+        user = form.save(commit=False)
+
+        # Additional fields not included in the form (email, first_name, last_name)
+        user.email = form.cleaned_data['email']
+        user.first_name = form.cleaned_data['first_name']
+        user.last_name = form.cleaned_data['last_name']
+        
+
+        # Save the user with the additional fields
+        user.save()
+
         # TODO send email
         # send_mail(
         #     subject="Signup confirmed!",
@@ -39,5 +51,6 @@ class SignupView(generic.CreateView):
         #     from_email="noreply@test.com",
         #     recipient_list="test@test.com"
         # )
+
         # kdb: super() function inherits from SignupView to continue it's functionality, allows me to add items within the SignupView process
-        # return super(SignupView).form_valid(form)
+        return super(SignupView,self).form_valid(form)

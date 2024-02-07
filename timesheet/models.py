@@ -7,7 +7,7 @@ class Location(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField()
 
-    def __str__(self) -> str:
+    def __str__(self):
         return self.name
 
     # kdb: Meta needed to use external database
@@ -30,7 +30,7 @@ class Timesheet(models.Model):
     # kdb: latitude and longitude added to document the user's location, max_digits=9 and decimal_places=6 will help store the user's precise location.
     location = models.CharField(max_length=255, null=True, blank=True)
 
-    def __str__(self) -> str:
+    def __str__(self):
         return (f"{self.user} on {self.date} clocked in at {self.clock_in} near {self.location}")
 
 # Team should be linked to a user profile

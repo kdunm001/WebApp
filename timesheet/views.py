@@ -20,7 +20,6 @@ def history(request):
     user_timesheets = Timesheet.objects.filter(user=request.user).order_by('-date', '-clock_in')    
     context = {
             "user_timesheets": user_timesheets,
-            "username": request.user.username,
         }
     return render(request, "timesheet/history.html", context)
 

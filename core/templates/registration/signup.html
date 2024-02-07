@@ -9,7 +9,7 @@
             <div class="mb-3 pb-1 border-b border-gray-200">
                 <h1 class="text-center text-2xl font-medium text-gray-900 title-font mb-2">Sign up to SpaceTrace</h1>
             </div>
-            <!-- Under venv > Lib > contrib > auth > views.py lives a LoginView (this is where it states that the view is linked to registration > login.html, which I had to create).  AuthenticationForm lives in venv > Lib > contrib > auth > formss.py -->
+            <!-- Under venv > Lib > contrib > auth > views.py lives a LoginView (this is where it states that the view is linked to registration > login.html, which I had to create).  AuthenticationForm lives in venv > Lib > contrib > auth > forms.py -->
             <form method="post">
                 {% csrf_token %}
                 <!--{{ form.as_p }}-->
