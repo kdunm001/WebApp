@@ -1,39 +1,169 @@
 {% extends 'core/base.html' %}
+{% load static %}
 
-{% block title%}Timesheet | {% endblock %}
+
+{% block title %}Timesheet | {% endblock title %}
 
 {% block content %}
-    <section class="max-w-xl mx-auto text-gray-600 body-font">
-        <div class="container px-5 py-5 mx-auto">
-            <div class="flex flex-wrap w-full mb-20 flex-col items-left text-left">
-                <h1 class="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">Timesheet</h1>
-                <p class="lg:w-1/2 w-full leading-relaxed text-gray-500">Use the button below to clock in.</p>
-                <p id="userLocation">Current Location: {{ user_location }}</p>
-                <form method="post" action=".">
-                    {% csrf_token %}
-                    <input type="hidden" name="latitude" id="latitude" value="">
-                    <input type="hidden" name="longitude" id="longitude" value="">
-                    <button type="submit" name="clock_in" value="clock_in" class="mt-5 flex flex-wrap w-full mb-20 flex-col items-center text-center text-white bg-green-500 border-0 py-2 px-6 focus:outline-none hover:bg-green-600 rounded text-lg">Clock In</button>
-                </form>
-            </div>
-        </div>
-    </section>
+    <!-- Load Google Maps API -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
 
     <script>
-        // Use the Geolocation API to get the user's location
-        navigator.geolocation.getCurrentPosition(
-            function(position) {
-                // Update the user location in the form
-                document.getElementById('userLocation').innerText = 'Current Location: ' + position.coords.latitude + ', ' + position.coords.longitude;
+        // Initialize the map
+        let map;
+        let userMarker;
+        let userLocation = { lat: 1, lng: 1 };
+        let clockInButton;
 
-                // Update hidden form fields with the latitude and longitude
-                document.getElementById('latitude').value = position.coords.latitude;
-                document.getElementById('longitude').value = position.coords.longitude;
-            },
+        // JavaScript function that creates a map in the div (specified later in the html), taken from the Google Maps JavaScript API documentation.
+        async function initMap() {
+            const { Map } = await google.maps.importLibrary("maps");
 
-            function(error) {
-                console.error('Error getting current location:', error.message);
+            map = new Map(document.getElementById("map"), {
+                center: userLocation,
+                zoom: 13,
+                mapId: '4bb9e065fd60ba4'
+            });
+
+            // Enable or disable the clock-in button based on geofencing
+            clockInButton = document.getElementById('clockInButton');
+
+            // Check if geolocation is supported by the browser.
+            if (navigator.geolocation) {
+                // Prompt the user for permission to access their location
+                // Use watchPosition instead of getUserLocation (only gets location once), because the function will continuously monitor the device's location and receive updates whenever the location changes
+                navigator.geolocation.watchPosition(
+                    // Success callback function
+                    function (position) {
+                        // Get the user's latitude and longitude coordinates and assign them to variables in an object
+                        userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                            // Not sure if enableHighAccuracy should go here, but it does not break the code in this spot, and it seems to be accurately locating
+                            enableHighAccuracy: true,
+                        };
+
+                        updateMap(userLocation);
+                        checkGeofencing(userLocation);
+                    },
+                    // Error callback function
+                    function (error) {
+                        console.error(`Error getting location: ${error.message}`);
+                    } 
+                );
+            // If geolocation is not supported by the browser...
+            } else {
+                console.error("Geolocation is not supported by this browser.");
             }
-        );
-  </script>
+
+            // Add markers for each location passed from the Django view
+            {% for location in locations %}
+                var marker = new google.maps.Marker({
+                    position: { lat: {{ location.latitude }}, lng: {{ location.longitude }} },
+                    map: map,
+                    title: "{{ location.name }}",
+                });
+
+                // Create a circle object and use bindTo() to tie it to the location marker, https://developers.google.com/maps/documentation/javascript/reference?csw=1#Circle 
+                var circle = new google.maps.Circle({
+                    map: map,
+                    radius: 804.672,    // 0.5 miles in meters
+                    fillColor: '#00ff00',
+                    strokeColor: '#02bd02',
+                    strokeWeight: 1,
+                    });
+                circle.bindTo('center', marker, 'position');
+            {% endfor %}
+
+            // Directly check geofencing after initializing the map
+            // checkGeofencing(userLocation);
+        }
+
+        // If a userMarker already exists, when the location of the user is updated, delete the old marker
+        function updateMap(location) {
+            if (userMarker) {
+                userMarker.setMap(null); // Remove the marker from the map
+            }
+
+            // Center the map on the user's location
+            map.setCenter(location);
+
+            // Create a marker for the user's location
+            userMarker = new google.maps.Marker({
+                position: location,
+                map: map,
+                icon: '{% static 'images/arrow.png' %}',
+                title: "Your Location",
+            });
+
+            // Check geofencing when the map is updated
+            // the 'checkGeofencing' function will enable or disable the clock-in button based on whether the user is within the geofenced area. The button is initially disabled and will only be enabled when the user is within the specified radius of any of the predefined locations
+            //checkGeofencing(location);
+        }
+
+        function checkGeofencing(userLocation) {
+            // Create an array of locations, from database
+            const locations = [
+                {% for location in locations %}
+                    { name: "{{ location.name }}", latitude: {{ location.latitude }}, longitude: {{ location.longitude }} },
+                {% endfor %}
+            ];
+
+            // Initiate variables
+            let withinRadius = false;
+            let locationName = '';
+
+            // Check to see if the user location is within the radius of the locations (using the checkRadius function for each location)
+            for (const location of locations) {
+                if (checkRadius(userLocation, location.latitude, location.longitude, 804.672)) {
+                    withinRadius = true;
+                    locationName = location.name;
+                    break;
+                }
+            }
+
+            // Set hidden input values with user's latitude, longitude, and location name
+            document.getElementById('location_name').value = withinRadius ? locationName : '';
+
+            // Enable or disable the clock-in button based on geofencing
+            const clockInButton = document.getElementById('clockInButton');
+            if (withinRadius) {
+                clockInButton.classList.remove('bg-gray-300');
+                clockInButton.classList.add('bg-green-500', 'hover:bg-green-600');
+                clockInButton.innerText = "Clock In";
+                clockInButton.disabled = false;
+            } else {
+                clockInButton.classList.remove('bg-green-500', 'hover:bg-green-600');
+                clockInButton.classList.add('bg-gray-300');
+                clockInButton.innerText = "To clock in, you must be within radius";
+                clockInButton.disabled = true;
+            }
+        }
+
+        // The checkRadius function calculates the distance between the user and each location to determine if the user is within the radius
+        function checkRadius(userLocation, locationLat, locationLng, radius) {
+            const userLatLng = new google.maps.LatLng(userLocation.lat, userLocation.lng);
+            const locationLatLng = new google.maps.LatLng(locationLat, locationLng);
+            const distance = google.maps.geometry.spherical.computeDistanceBetween(userLatLng, locationLatLng);
+
+            // return true if user is within radius
+            return distance <= radius;
+        }     
+
+        initMap();
+    </script>
+
+    <div class="bg-gray-100 p-8">
+        <div class="max-w-md mx-auto bg-white rounded p-6 shadow-md">
+            <form method="POST" action="{% url 'clock_in' %}">
+                {% csrf_token %}
+                <input type="hidden" name="location_name" id="location_name">
+                <button id="clockInButton" name="clock_in" value="clock_in" class="mt-0 flex flex-wrap w-full mb-1 flex-col items-center text-center text-white bg-gray-300 border-0 py-2 px-6 focus:outline-none rounded text-lg" disabled>to clock in, you must be within radius</button>                
+            </form>
+
+            <div id="map" style="height: 60vh; width: 100%"></div>
+            <script async src="https://maps.googleapis.com/maps/api/js?key={{ key }}&callback=initMap"></script>
+
+        </div>
+    </div>
 {% endblock content %}

@@ -4,16 +4,21 @@
 {% block title%}Sign Up | {% endblock %}
 
 {% block content %}
-    <div class="max-w-xl mx-auto">
-        <!-- Under venv > Lib > contrib > auth > views.py lives a LoginView (this is where it states that the view is linked to registration > login.html, which I had to create).  AuthenticationForm lives in venv > Lib > contrib > auth > formss.py -->
-        <form method="post">
-            {% csrf_token %}
-            <!--{{ form.as_p }}-->
-            {{ form|crispy }}
-            <button type='submit' class="w-full text-white bg-green-500 py-2 px-6 focus:outline-none hover:bg-green-600 rounded-md text-lg">Sign Up</button>
-        </form>
-        <div class="mt-3 pt-2 border-t border-gray-200">
-            <a class=" hover:text-gray-400" href="{% url 'login' %}">Already have an account? Log in instead.</a>
-        </div>
+    <div class="bg-gray-100 p-8">
+        <div class="max-w-md mx-auto bg-white rounded p-6 shadow-md">
+            <div class="mb-3 pb-1 border-b border-gray-200">
+                <h1 class="text-center text-2xl font-medium text-gray-900 title-font mb-2">Sign up to SpaceTrace</h1>
+            </div>
+            <!-- Under venv > Lib > contrib > auth > views.py lives a LoginView (this is where it states that the view is linked to registration > login.html, which I had to create).  AuthenticationForm lives in venv > Lib > contrib > auth > forms.py -->
+            <form method="post">
+                {% csrf_token %}
+                <!--{{ form.as_p }}-->
+                {{ form|crispy }}
+                <button type='submit' class="w-full text-white bg-green-500 py-2 px-6 focus:outline-none hover:bg-green-600 rounded-md text-lg">Continue</button>
+            </form>
+            <div class="mt-3 pt-2 border-t border-gray-200">
+                Already have an account? <a class=" hover:text-gray-400" href="{% url 'login' %}"><u>Log in instead.</u></a>
+            </div>
+        </div>    
     </div>
 {% endblock content %}

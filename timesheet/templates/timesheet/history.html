@@ -3,39 +3,41 @@
 {% block title%}History | {% endblock %}
 
 {% block content %}
-    <section class="text-gray-600 body-font">
-        <div class="container px-5 py-24 mx-auto">
-            <div class="flex flex-col text-center w-full mb-20">
-                <h1 class="sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900">Timesheet history for {{ username }}</h1>
-                {% if user_timesheets %}
-                    <p class="lg:w-2/3 mx-auto leading-relaxed text-base">Organized by ascending date and clock-in time</p>
-                {% else %}
-                    <p class="lg:w-2/3 mx-auto leading-relaxed text-base">No timesheet records found.</p>
-                {% endif %}
-            </div>
-        {% if user_timesheets %}
-            <div class="lg:w-2/3 w-full mx-auto overflow-auto">              
-                <table class="table-auto w-full text-left whitespace-no-wrap">
-                    <thead>
-                        <tr>
-                            <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100 rounded-tl rounded-bl">Date</th>
-                            <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Logged Time (H:MM:SS.MS)</th>
-                            <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Associated Location</th>
-                            <th class="w-10 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100 rounded-tr rounded-br"></th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {% for timesheet in user_timesheets %}
+    <section class="bg-gray-100 text-gray-600 body-font">
+        <section class="text-gray-600 body-font">
+            <div class="container px-5 py-24 mx-auto">
+                <div class="flex flex-col text-center w-full mb-20">
+                    <h1 class="sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900">Timesheet history for {{ user.first_name }} {{ user.last_name }}</h1>
+                    {% if user_timesheets %}
+                        <p class="lg:w-2/3 mx-auto leading-relaxed text-base">Organized by ascending date and clock-in time</p>
+                    {% else %}
+                        <p class="lg:w-2/3 mx-auto leading-relaxed text-base">No timesheet records found.</p>
+                    {% endif %}
+                </div>
+            {% if user_timesheets %}
+                <div class="lg:w-2/3 w-full mx-auto overflow-auto">              
+                    <table class="table-auto w-full text-left whitespace-no-wrap">
+                        <thead>
                             <tr>
-                                <td class="px-4 py-3">{{ timesheet.date }}</td>
-                                <td class="px-4 py-3">{{ timesheet.duration }}</td>
-                                <td class="px-4 py-3">{{ timesheet.clock_in_latitude }}, {{ timesheet.clock_in_longitude }}</td>
+                                <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100 rounded-tl rounded-bl">Date</th>
+                                <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Logged Time (H:MM:SS.MS)</th>
+                                <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Associated Location</th>
+                                <th class="w-10 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100 rounded-tr rounded-br"></th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        {% endif %}
+                        </thead>
+
+                        <tbody>
+                            {% for timesheet in user_timesheets %}
+                                <tr>
+                                    <td class="px-4 py-3">{{ timesheet.date }}</td>
+                                    <td class="px-4 py-3">{{ timesheet.duration }}</td>
+                                    <td class="px-4 py-3">{{ timesheet.location }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </section>
     </section>
 {% endblock content %}

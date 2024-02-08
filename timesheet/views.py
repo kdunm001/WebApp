@@ -1,24 +1,28 @@
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from datetime import datetime
-from .models import Timesheet
+from .models import Timesheet, Location
+from django.conf import settings
 #kdb: Verifies that user is authenticated, and, if not authenticated, will redirect the user to the log in screen
 # from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 
+
+# from shapely.geometry import Point
+
 # kdb: Only want the user to view their own information, use mixins (arguments that are added to the inheritance of classes)
 
 # Create your views here.
-# kdb: Function-base view
+# kdb: Function-base views
 @login_required
 def history(request):
     # Query the database for the timesheets associated with the user, organize bu newest date first, then most recent clock in time
     user_timesheets = Timesheet.objects.filter(user=request.user).order_by('-date', '-clock_in')    
     context = {
             "user_timesheets": user_timesheets,
-            "username": request.user.username,
         }
     return render(request, "timesheet/history.html", context)
+
 
 @login_required
 def clock_in(request):  
@@ -28,18 +32,13 @@ def clock_in(request):
         current_date = timezone.now().date()
         current_time = timezone.now().time()
 
-        # Capture the user's location
-        latitude = request.POST.get('latitude')
-        longitude = request.POST.get('longitude')
-
         # Create a new Timesheet entry with current date and time when clocked in, and set it as active
         timesheet = Timesheet(
-            user=request.user, 
+            user=request.user,
             date=current_date, 
             clock_in=current_time, 
             active=True,
-            clock_in_latitude=latitude,
-            clock_in_longitude=longitude,
+            location=request.POST.get('location_name'),
         )
         timesheet.save()
 
@@ -54,7 +53,14 @@ def clock_in(request):
             return redirect('clock_out')
         
         else:
-            return render(request, 'timesheet/clock-in.html', {'user_location': None})
+            locations = Location.objects.all()
+
+            key = settings.GOOGLE_MAPS_API_KEY
+            context = {
+                'locations': locations,
+                'key': key,
+            }
+            return render(request, 'timesheet/clock-in.html', context)
 
 
 @login_required
@@ -82,5 +88,13 @@ def clock_out(request):
             request.session['clocked_in'] = False
 
             return redirect('clock_in')
-        
-    return render(request, 'timesheet/clock-out.html', {'user_location': None})
+    
+    else:
+        locations = Location.objects.all()
+
+        key = settings.GOOGLE_MAPS_API_KEY
+        context = {
+            'locations': locations,
+            'key': key,
+        }
+        return render(request, 'timesheet/clock-out.html', context)
