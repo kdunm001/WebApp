@@ -13,20 +13,40 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+# kdb: Using django-environ docs to assist with creating environment variables that will be hidden during production
+import environ
+import os
 
+env = environ.Env(
+    # Set casting, default value
+    DEBUG=(bool, False)
+)
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Set the project base directory
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Normally, deployment providers allow us to specify environment varibles within the UI when creating a project, and will be loaded in the terminal when the project is being deployed, and set variables in the session
+# Environment variables will be read from the session first, not the .env file, since the .env file is only used in local development
+# $env:READ_DOT_ENV_FILE=$true (for PowerShell), set READ_DOT_ENV_FILE=True (for Windows), export READ_DOT_ENV_FILE=True (for Unix shells)
+READ_DOT_ENV_FILE = env.bool('READ_DOT_ENV_FILE', default=False)
+if READ_DOT_ENV_FILE:
+    # Take environment variables from .env file
+    # kdb: Reading the .env file into project, so we can access variables
+    environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
+# False if not in os.environ because of casting above
+DEBUG = env('DEBUG')
+
+# Raises Django's ImproperlyConfigured, exception if SECRET_KEY not in os.environ
+SECRET_KEY = env('SECRET_KEY')
+GOOGLE_MAPS_API_KEY = env('GOOGLE_MAPS_API_KEY')
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-n%a^rihqiv5y8i05ani90w0hr-)g1%uy@r6*khuh!i8ra=$pip'
-GOOGLE_MAPS_API_KEY = 'AIzaSyCbJteY-0D9_W3lwHCzv4GJ8IKRBjOCiE0'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
 # kdb: In production, this is where the hosts will be identified.  For local development, this can be left blank.
 ALLOWED_HOSTS = []
@@ -169,17 +189,25 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'core.User'
 
 # kdb: Overriding the defaul login and logout redirects
-LOGIN_REDIRECT_URL = "home_page"
-LOGOUT_REDIRECT_URL = "home_page"
+LOGIN_REDIRECT_URL = 'home_page'
+LOGOUT_REDIRECT_URL = 'home_page'
 
 # kdb: Configure email backend, telling Django how to send emails, in the instance below, it just logs the emails in the terminal - will need to be updated for production
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-# kdb: What is used by default is smtp (simple Mail Transfer Protocol), and needs configuration with smtp credentials (which is given by email providers like SendGrid or MailGun)
+#EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# kdb: What is used by default is smtp (Simple Mail Transfer Protocol), and needs configuration with smtp credentials (which is given by email providers like SendGrid or MailGun)
 # EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 # OR
 # EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 # EMAIL_FILE_PATH = BASE_DIR / "sent_emails"
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.mailgun.org'
+EMAIL_HOST_USER = 'spacetrace.noreply@gmail.com'
+EMAIL_HOST_PASSWORD = 'IForgotIt123'
+# TLS is for secure email sending
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+DEFAULT_FROM_EMAIL = 'noreply@spacetrace.com'
 
 # kdb: Linking Crispy Forms
 CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
