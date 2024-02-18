@@ -31,11 +31,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Normally, deployment providers allow us to specify environment varibles within the UI when creating a project, and will be loaded in the terminal when the project is being deployed, and set variables in the session
 # Environment variables will be read from the session first, not the .env file, since the .env file is only used in local development
 # $env:READ_DOT_ENV_FILE=$true (for PowerShell), set READ_DOT_ENV_FILE=True (for Windows), export READ_DOT_ENV_FILE=True (for Unix shells)
-#READ_DOT_ENV_FILE = env.bool('READ_DOT_ENV_FILE', default=False)
-#if READ_DOT_ENV_FILE:
+READ_DOT_ENV_FILE = env.bool('READ_DOT_ENV_FILE', default=False)
+if READ_DOT_ENV_FILE:
     # Take environment variables from .env file
     # kdb: Reading the .env file into project, so we can access variables
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+    environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # False if not in os.environ because of casting above
 DEBUG = env('DEBUG')
@@ -115,16 +115,13 @@ WSGI_APPLICATION = 'webapp_django.wsgi.application'
 # kdb: This database configuration can be updated to indicate another type of database, SQLite3 is good for local but not for producation (PostgreSQL or MySQL is recommended).
 # 'ENGINE': 'django.db.backends.sqlite3',
 # 'NAME': BASE_DIR / 'db.sqlite3',
-# kdb: I tried setting the items below into a .env file and was having trouble accessing them, so 
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'spacetracedb',
-        'USER': 'spacetraceuser',
-        'PASSWORD': 'SpaceTrace123!',
-        'HOST': 'localhost',
-        'PORT': 5432,
-    }
+    'default': env.db(),
+    
+    'extra': env.db_url(
+        'DATABASE_URL',
+    )
 }
 
 # kdb: In order to use an external database for the locations of addresses
