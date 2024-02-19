@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-# kdb: Using django-environ docs to assist with creating environment variables that will be hidden during production
+# kdb: Using django-environ docs to assist with creating environment variables that will be hidden during production, https://django-environ.readthedocs.io/en/latest/
 import environ
 import os
 
@@ -25,7 +25,7 @@ env = environ.Env(
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Set the project base directory
+# Set the project base directory, per the environ instructions - this is not working
 #BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Normally, deployment providers allow us to specify environment varibles within the UI when creating a project, and will be loaded in the terminal when the project is being deployed, and set variables in the session
