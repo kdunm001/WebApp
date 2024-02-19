@@ -54,7 +54,7 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-
+# kdb: Install django-tailwind and follow the instructions to register tailwind in the django project https://django-tailwind.readthedocs.io/en/latest/installation.html
 INSTALLED_APPS = [
     # kdb: Django's default apps
     'django.contrib.admin',
@@ -65,6 +65,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # kdb: Third-party apps
+    'tailwind',
+    'theme',
     'crispy_forms',
     'crispy_tailwind',
 
@@ -72,6 +74,14 @@ INSTALLED_APPS = [
     'core',
     'timesheet',
 ]
+
+TAILWIND_APP_NAME = 'theme'
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
+NPM_BIN_PATH = "C:/Program Files/nodejs/npm.cmd"
 
 MIDDLEWARE = [
     # kdb: Django's default middleware
