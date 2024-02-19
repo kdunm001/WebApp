@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     'theme',
     'crispy_forms',
     'crispy_tailwind',
+    "whitenoise.runserver_nostatic",
 
     # kdb: Locally created apps
     'core',
@@ -84,6 +85,8 @@ INTERNAL_IPS = [
 NPM_BIN_PATH = "C:/Program Files/nodejs/npm.cmd"
 
 MIDDLEWARE = [
+    #kdb: Added middleware for whitenoise
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     # kdb: Django's default middleware
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -191,8 +194,16 @@ STATICFILES_DIRS = [
 # kdb: Root folder for all static files, once all items are placed in one directory
 STATIC_ROOT = "static_root"
 
-# kdb: Imaves and videos location
+# kdb: Images and videos location
 MEDIA_URL = 'images/'
+
+# kdb: Add configuration to whitenoise
+STORAGES = {
+    # ...
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 
 # Default primary key field type
