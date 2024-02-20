@@ -182,7 +182,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 # kdb: Extra static settings, lists of paths to help Django recognize static files
 STATICFILES_DIRS = [
     BASE_DIR / "static",
@@ -191,7 +191,7 @@ STATICFILES_DIRS = [
 STATIC_ROOT = "static_root"
 
 # kdb: Images and videos location
-MEDIA_URL = 'images/'
+MEDIA_URL = '/images/'
 
 # kdb: Add configuration to whitenoise
 STORAGES = {
@@ -250,3 +250,4 @@ if not DEBUG:
 
     # kdb: In production, this is where the hosts will be identified.  For local development, this can be left blank. the "*" allows this app to work on any host website.
     ALLOWED_HOSTS = ["*"]
+
