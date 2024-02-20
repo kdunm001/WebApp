@@ -224,8 +224,8 @@ LOGOUT_REDIRECT_URL = 'home_page'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.mailgun.org'
-EMAIL_HOST_USER = 'spacetrace.noreply@gmail.com'
-EMAIL_HOST_PASSWORD = 'IForgotIt123'
+EMAIL_HOST_USER = 'postmaster@sandbox15e019de97b74827910a1bf6d3659f3f.mailgun.org'
+EMAIL_HOST_PASSWORD = 'f4cf3b22b8234b903a3ca0e4bac6955d-8c8e5529-748ea16a'
 # TLS is for secure email sending
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
