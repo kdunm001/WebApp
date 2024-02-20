@@ -49,10 +49,6 @@ GOOGLE_MAPS_API_KEY = env('GOOGLE_MAPS_API_KEY')
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 
-# kdb: In production, this is where the hosts will be identified.  For local development, this can be left blank.
-ALLOWED_HOSTS = []
-
-
 # Application definition
 # kdb: Install django-tailwind and follow the instructions to register tailwind in the django project https://django-tailwind.readthedocs.io/en/latest/installation.html
 INSTALLED_APPS = [
@@ -238,3 +234,19 @@ DEFAULT_FROM_EMAIL = 'noreply@spacetrace.com'
 # kdb: Linking Crispy Forms
 CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
 CRISPY_TEMPLATE_PACK = "tailwind"
+
+# When in production, here are the security settings
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_HSTS_SECONDS = 31536000 # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    X_FRAME_OPTIONS = "DENY"
+
+    # kdb: In production, this is where the hosts will be identified.  For local development, this can be left blank. the "*" allows this app to work on any host website.
+    ALLOWED_HOSTS = ["*"]
