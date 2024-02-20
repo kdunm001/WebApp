@@ -1,4 +1,4 @@
-{% load static tailwind_tags %}
+<!-- {% load static tailwind_tags %} -->
 {% load static %}
 
 <!DOCTYPE html>
@@ -15,8 +15,8 @@
         <!-- <link href="{% static 'file_name' %}" rel="stylesheet"> -->
 
         <!-- Taiwind CDN, not ideal for production, instead use a minimized version of the CSS -->
-        <!-- <script src="https://cdn.tailwindcss.com"></script> -->
-        {% tailwind_css %}
+        <script src="https://cdn.tailwindcss.com"></script>
+        <!-- {% tailwind_css %} -->
 
         {% block head %}{% endblock head %}
     </head>
