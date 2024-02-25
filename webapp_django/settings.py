@@ -249,5 +249,5 @@ if not DEBUG:
     X_FRAME_OPTIONS = "DENY"
 
 # kdb: In production, this is where the hosts will be identified.  For local development, this can be left blank. the "*" allows this app to work on any host website.
-ALLOWED_HOSTS = ["spacetrace-app-59mhc.ondigitalocean.app"]
+ALLOWED_HOSTS = ["spacetrace-app-59mhc.ondigitalocean.app", "*"]
 

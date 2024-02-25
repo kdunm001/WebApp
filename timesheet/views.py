@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from datetime import datetime
-from .models import Timesheet, Location
+from .models import Timesheet, Location, Doctor
 from django.conf import settings
 #kdb: Verifies that user is authenticated, and, if not authenticated, will redirect the user to the log in screen
 # from django.contrib.auth.mixins import LoginRequiredMixin
@@ -39,6 +39,7 @@ def clock_in(request):
             clock_in=current_time, 
             active=True,
             location=request.POST.get('location_name'),
+            doctor=request.POST.get('selected_doctor'),
         )
         timesheet.save()
 
@@ -54,10 +55,12 @@ def clock_in(request):
         
         else:
             locations = Location.objects.all()
+            doctors = Doctor.objects.all()
 
             key = settings.GOOGLE_MAPS_API_KEY
             context = {
                 'locations': locations,
+                'doctors': doctors,
                 'key': key,
             }
             return render(request, 'timesheet/clock-in.html', context)

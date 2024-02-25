@@ -22,6 +22,7 @@
                                 <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100 rounded-tl rounded-bl">Date</th>
                                 <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Logged Time (H:MM:SS.MS)</th>
                                 <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Associated Location</th>
+                                <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Doctor</th>
                                 <th class="w-10 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100 rounded-tr rounded-br"></th>
                             </tr>
                         </thead>
@@ -32,6 +33,7 @@
                                     <td class="px-4 py-3">{{ timesheet.date }}</td>
                                     <td class="px-4 py-3">{{ timesheet.duration }}</td>
                                     <td class="px-4 py-3">{{ timesheet.location }}</td>
+                                    <td class="px-4 py-3">{{ timesheet.doctor }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>

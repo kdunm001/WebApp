@@ -25,10 +25,10 @@
                 mapId: '4bb9e065fd60ba4'
             });
 
-            // Enable or disable the clock-in button based on geofencing
+            // Identify the clock-in button as a variable
             clockInButton = document.getElementById('clockInButton');
 
-            // Check if geolocation is supported by the browser.
+            // Check if geolocation is supported by the browser
             if (navigator.geolocation) {
                 // Prompt the user for permission to access their location
                 // Use watchPosition instead of getUserLocation (only gets location once), because the function will continuously monitor the device's location and receive updates whenever the location changes
@@ -43,7 +43,9 @@
                             enableHighAccuracy: true,
                         };
 
+                        // Update the map to show the user's location
                         updateMap(userLocation);
+                        // Check the user's location to see if it lies within the geofenced areas
                         checkGeofencing(userLocation);
                     },
                     // Error callback function
@@ -74,9 +76,6 @@
                     });
                 circle.bindTo('center', marker, 'position');
             {% endfor %}
-
-            // Directly check geofencing after initializing the map
-            // checkGeofencing(userLocation);
         }
 
         // If a userMarker already exists, when the location of the user is updated, delete the old marker
@@ -88,55 +87,100 @@
             // Center the map on the user's location
             map.setCenter(location);
 
-            // Create a marker for the user's location
+            // Create a new marker for the user's location
             userMarker = new google.maps.Marker({
                 position: location,
                 map: map,
                 icon: '{% static 'images/arrow.png' %}',
                 title: "Your Location",
-            });
-
-            // Check geofencing when the map is updated
-            // the 'checkGeofencing' function will enable or disable the clock-in button based on whether the user is within the geofenced area. The button is initially disabled and will only be enabled when the user is within the specified radius of any of the predefined locations
-            //checkGeofencing(location);
+            });          
         }
 
+        // the 'checkGeofencing' function will enable or disable the clock-in button based on whether the user is within the geofenced area. The button is initially disabled and will only be enabled when the user is within the specified radius of any of the predefined locations
         function checkGeofencing(userLocation) {
             // Create an array of locations, from database
             const locations = [
                 {% for location in locations %}
-                    { name: "{{ location.name }}", latitude: {{ location.latitude }}, longitude: {{ location.longitude }} },
+                    { id: {{ location.id }}, name: "{{ location.name }}", latitude: {{ location.latitude }}, longitude: {{ location.longitude }} },
                 {% endfor %}
             ];
 
             // Initiate variables
             let withinRadius = false;
             let locationName = '';
+            let locationId;
 
             // Check to see if the user location is within the radius of the locations (using the checkRadius function for each location)
             for (const location of locations) {
                 if (checkRadius(userLocation, location.latitude, location.longitude, 804.672)) {
                     withinRadius = true;
                     locationName = location.name;
+                    locationId = location.id;
+                    // console.log(locationId)
                     break;
                 }
             }
 
-            // Set hidden input values with user's latitude, longitude, and location name
-            document.getElementById('location_name').value = withinRadius ? locationName : '';
+            // Set hidden input values with user's latitude, longitude, and location name (shorthand if-else statement)
+            // document.getElementById('location_name').value = withinRadius ? locationName : '';
+            if (withinRadius) {
+                document.getElementById('location_name').value = locationName;
+            } else {
+                document.getElementById('location_name').value = '';
+            }
+
 
             // Enable or disable the clock-in button based on geofencing
             const clockInButton = document.getElementById('clockInButton');
+            const doctorsDropDown = document.getElementById('selected_doctor');
+
+            // Clear the doctor's drop-down list every time the user location is updated
+           doctorsDropDown.innerHTML = '';
+
+            // Create an array of doctors, from database
+            const allDoctors = [
+                {% for doctor in doctors %}
+                    { name: "{{ doctor.first_name }} {{ doctor.last_name }}", location: "{{ doctor.location }}" },
+                {% endfor %}
+            ];
+            // console.log(allDoctors);
+
+            // Filter doctors based on location name
+            const doctorList = allDoctors.filter(doctor => doctor.location === locationName);
+            // console.log(doctorList);
+            
             if (withinRadius) {
                 clockInButton.classList.remove('bg-gray-300');
                 clockInButton.classList.add('bg-green-500', 'hover:bg-green-600');
                 clockInButton.innerText = "Clock In";
                 clockInButton.disabled = false;
+
+                doctorsDropDown.disabled = false;
+                doctorsDropDown.classList.remove('bg-gray-50', 'text-gray-500');
+
+                // Add default option, essentially a placeholder text that is disabled for the user to select
+                var defaultOption = document.createElement("option");
+                defaultOption.value = "";
+                defaultOption.text = `Select a doctor from ${locationName}`;
+                defaultOption.selected = true;
+                defaultOption.disabled = true;
+                doctorsDropDown.add(defaultOption);
+
+                for (let doctor of doctorList) {
+                    var option = document.createElement("option");
+                    option.value = doctor.name;
+                    option.text = doctor.name;
+                    doctorsDropDown.add(option);
+                };
             } else {
                 clockInButton.classList.remove('bg-green-500', 'hover:bg-green-600');
                 clockInButton.classList.add('bg-gray-300');
                 clockInButton.innerText = "To clock in, you must be within radius";
                 clockInButton.disabled = true;
+
+                // Reset doctors drop-down list when not within radius
+                doctorsDropDown.disabled = true;
+                doctorsDropDown.classList.add('bg-gray-50', 'text-gray-500');
             }
         }
 
@@ -153,11 +197,16 @@
         initMap();
     </script>
 
+
+
     <div class="bg-gray-100 p-8">
         <div class="max-w-md mx-auto bg-white rounded p-6 shadow-md">
-            <form method="POST" action="{% url 'clock_in' %}">
+            <form method="POST" action="{% url 'clock_in' %}" onsubmit="return validateForm()">
                 {% csrf_token %}
                 <input type="hidden" name="location_name" id="location_name">
+                <select disabled name = "selected_doctor" id="selected_doctor" class="bg-gray-50 border border-gray-300 text-gray-500 mb-2 rounded-lg w-full p-2.5">
+                    <option value="">Once within radius, you can select a doctor</option>
+                </select>            
                 <button id="clockInButton" name="clock_in" value="clock_in" class="mt-0 flex flex-wrap w-full mb-1 flex-col items-center text-center text-white bg-gray-300 border-0 py-2 px-6 focus:outline-none rounded text-lg" disabled>to clock in, you must be within radius</button>                
             </form>
 

@@ -15,6 +15,16 @@ class Location(models.Model):
     #   app_label = 'SFDC' (specify the app label for the external database)
     #   db_table = 'SFDC_locations' (specify the table name in the external database)
 
+
+class Doctor(models.Model):
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return (f"{self.first_name} {self.last_name}")
+    
+
 class Timesheet(models.Model):
     # id (primary key, auto-generated)
     # kdb: on_delete=models.CASCADE (if User is deleted, the timesheet will also be deleted)
@@ -29,6 +39,7 @@ class Timesheet(models.Model):
     active = models.BooleanField(default=False)
     # kdb: latitude and longitude added to document the user's location, max_digits=9 and decimal_places=6 will help store the user's precise location.
     location = models.CharField(max_length=255, null=True, blank=True)
+    doctor = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
         return (f"{self.user} on {self.date} clocked in at {self.clock_in} near {self.location}")
